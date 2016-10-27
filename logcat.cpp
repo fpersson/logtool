@@ -53,16 +53,16 @@ Logcat::~Logcat(){
 void Logcat::gotData(){
     bool blacklisted = false;
     QByteArray byte = m_process->readAllStandardOutput();
-    QStringList lines = QString(byte).split("\n");
-    foreach(QString line, lines){
-        foreach(QString key, m_blacklist){
+    QStringList lines = QString(byte).split('\n');
+    foreach(const QString &line, lines){
+        foreach(const QString &key, m_blacklist){
             if(line.contains(key)){
                 blacklisted = true;
                 break;
             }
         }
         if(line.size() > 1 && !blacklisted){
-            foreach(QString key, m_searchkeys ){
+            foreach(const QString &key, m_searchkeys ){
                 QString firstchar = line.mid(0,1);
                 std::string colorcode = Color::Format::Reset;
                 if(firstchar.toLower() == "e"){ ///@todo remove hardcoded value, this print android system exceptions with red

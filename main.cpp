@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
     logdir = parser.value(opt_logdir);
 
-    if(logdir == ""){
+    if(logdir.isEmpty()){
         logdir = "/logtool/log";
     }
 

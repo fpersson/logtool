@@ -1,5 +1,5 @@
-#ifndef FQLOG_H
-#define FQLOG_H
+#ifndef FLOG_H
+#define FLOG_H
 
 /*
     This program is free software; you can redistribute it and/or
@@ -109,4 +109,4 @@ private:
 
 } //namespace
 
-#endif // FQLOG_H
+#endif // FLOG_H
