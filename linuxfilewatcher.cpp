@@ -23,7 +23,7 @@
 LinuxFileWatcher::LinuxFileWatcher(QObject *parent) : QObject(parent){;}
 
 void LinuxFileWatcher::startWatch() {
-    if(m_path != "") {
+    if(!m_path.isEmpty()) {
         QFile file(m_path);
         if (file.exists()) {
             m_filedescriptor = inotify_init();

@@ -35,8 +35,8 @@ class FileWatcher : public QObject
 {
 Q_OBJECT
 public:
-    FileWatcher(){;}
-    FileWatcher(const QString &file);
+    explicit FileWatcher(){;}
+    explicit FileWatcher(const QString &file);
     ~FileWatcher();
 
     void addPath(const QString &path);
@@ -55,7 +55,17 @@ private slots:
     void gotError(const QString &msg);
 
 signals:
+    void fileCreate(const QString &file);
+    void fileDelete(const QString &file);
+    void fileMove(const QString &file);
     void fileCloseWrite(const QString &file);
+
+    void dirCreate(const QString &dir);
+    void dirDelete(const QString &dir);
+    void dirMove(const QString &dir);
+    void dirCloseWrite(const QString &dir);
+
+    void error(const QString &msg);
 private:
 
 };

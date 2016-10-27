@@ -41,7 +41,7 @@ Logcat::Logcat(QString profile, QObject *parent) : QObject(parent){
 #if QT_VERSION >= 0x050600
     connect(m_process, SIGNAL(errorOccurred(QProcess::error)), this, SLOT(gotError(QProcess::error)));
 #endif
-    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(onExit(int, QProcess::ExitStatus)));
+    connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onExit(int,QProcess::ExitStatus)));
     connectAdb();
 }
 

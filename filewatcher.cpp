@@ -18,15 +18,12 @@
  Copyright (C) 2016, Fredrik Persson <fpersson.se@gmail.com>
  */
 
-
-#include <error.h>
+#include "filewatcher.h"
 #include <QtCore/QString>
 #include <QtCore/QArgument>
 #include <QtCore/QtGlobal>
 #include <QtCore/QtCore>
 #include <QtCore/QThread>
-#include "filewatcher.h"
-
 
 /**
  * @brief FileWatchDemo::FileWatchDemo for testing purpose, we use $HOME/watchdir/
@@ -46,17 +43,17 @@ void FileWatcher::addPath(const QString &path) {
     lfw->addPath(path);
     lfw->moveToThread(thread);
 
-    connect(lfw, SIGNAL(fileCreate(const QString)), this, SLOT(fileCreated(const QString)));
-    connect(lfw, SIGNAL(fileDelete(const QString)), this, SLOT(fileDeleted(const QString)));
-    connect(lfw, SIGNAL(fileCloseWrite(const QString)), this, SLOT(fileClosedWrite(const QString)));
-    connect(lfw, SIGNAL(fileMove(const QString)), this, SLOT(fileMoved(const QString)));
+    connect(lfw, SIGNAL(fileCreate(QString)), this, SLOT(fileCreated(QString)));
+    connect(lfw, SIGNAL(fileDelete(QString)), this, SLOT(fileDeleted(QString)));
+    connect(lfw, SIGNAL(fileCloseWrite(QString)), this, SLOT(fileClosedWrite(QString)));
+    connect(lfw, SIGNAL(fileMove(QString)), this, SLOT(fileMoved(QString)));
 
-    connect(lfw, SIGNAL(dirCreate(const QString)), this, SLOT(dirCreated(const QString)));
-    connect(lfw, SIGNAL(dirDelete(const QString)), this, SLOT(dirDeleted(const QString)));
-    connect(lfw, SIGNAL(dirCloseWrite(const QString)), this, SLOT(dirClosedWrite(const QString)));
-    connect(lfw, SIGNAL(dirMove(const QString)), this, SLOT(dirMoved(const QString)));
+    connect(lfw, SIGNAL(dirCreate(QString)), this, SLOT(dirCreated(QString)));
+    connect(lfw, SIGNAL(dirDelete(QString)), this, SLOT(dirDeleted(QString)));
+    connect(lfw, SIGNAL(dirCloseWrite(QString)), this, SLOT(dirClosedWrite(QString)));
+    connect(lfw, SIGNAL(dirMove(QString)), this, SLOT(dirMoved(QString)));
 
-    connect(lfw, SIGNAL(error(const QString)), this, SLOT(gotError(const QString)));
+    connect(lfw, SIGNAL(error(QString)), this, SLOT(gotError(QString)));
 
     connect(thread, SIGNAL(started()), lfw, SLOT(startWatch()));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -64,15 +61,15 @@ void FileWatcher::addPath(const QString &path) {
 }
 
 void FileWatcher::fileCreated(const QString &file){
-    ///@todo implement
+    emit fileCreate(file);
 }
 
 void FileWatcher::fileDeleted(const QString &file) {
-    ///@todo implement
+    emit fileDelete(file);
 }
 
 void FileWatcher::fileMoved(const QString &file) {
-    ///@todo implement
+    emit fileMove(file);
 }
 
 void FileWatcher::fileClosedWrite(const QString &file) {
@@ -80,23 +77,23 @@ void FileWatcher::fileClosedWrite(const QString &file) {
 }
 
 void FileWatcher::dirDeleted(const QString &dir) {
-    ///@todo implement
+    emit dirDelete(dir);
 }
 
 void FileWatcher::dirCreated(const QString &dir) {
-    ///@todo implement
+    emit dirCreate(dir);
 }
 
 void FileWatcher::dirMoved(const QString &dir) {
-    ///@todo implement
+    emit dirMove(dir);
 }
 
 void FileWatcher::dirClosedWrite(const QString &dir) {
-    ///@todo implement
+    emit dirCloseWrite(dir);
 }
 
 void FileWatcher::gotError(const QString &msg) {
-    ///@todo implement
+    emit error(msg);
 }
 
 FileWatcher::~FileWatcher(){
