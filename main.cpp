@@ -23,10 +23,10 @@
 #include <QString>
 #include <QDebug>
 
-#include "logcat.h"
-#include "flog.h"
+#include "app/logcat.h"
+#include "utils/flog.h"
 
-#include "filereader.h"
+#include "utils/filereader.h"
 
 int main(int argc, char *argv[])
 {
@@ -66,16 +66,12 @@ int main(int argc, char *argv[])
 
     utils::FQLog::getInstance().init(logdir, "/messages", false);
     QString profile = parser.value(opt_profile);
-    Logcat lc(profile);
+    logtool::Logcat lc(profile);
     int collapse = parser.value(opt_collapse).toInt();
     qDebug() << "Collapse level: " << collapse;
     if(collapse > 0){
         lc.setCollapseLevel(collapse);
     }
-
-    //utils::FileReader fr;
-
-    //QStringList qsl = fr.read("/home/fredrik/log_profiles/elo");
 
     return app.exec();
 }

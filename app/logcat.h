@@ -31,38 +31,39 @@
 #include <QPointer>
 #include <QFileSystemWatcher>
 
-#include "flog.h"
-#include "filereader.h"
-#include "unix_color.h"
-#include "filewatcher.h"
+#include "utils/flog.h"
+#include "utils/filereader.h"
+#include "utils/unix_color.h"
+#include "utils/filewatcher.h"
+namespace logtool {
+    const QString keyWordFile = "log_profiles/keys"; ///@todo remove this and create a nice config file.
 
-const QString keyWordFile = "log_profiles/keys"; ///@todo remove this and create a nice config file.
-
-class Logcat : public QObject{
+    class Logcat : public QObject {
     Q_OBJECT
-public:
-    explicit Logcat(QString profile,QObject *parent =0);
-    ~Logcat();
-    void setCollapseLevel(int level){m_collapseLevel=level;}
-    void connectAdb();
+    public:
+        explicit Logcat(QString profile, QObject *parent = 0);
+        ~Logcat();
+        void setCollapseLevel(int level) { m_collapseLevel = level; }
+        void connectAdb();
 
-signals:
+    signals:
 
-private slots:
-    void gotData();
-    void gotError(QProcess::ProcessError err);
-    void onExit(int exitCode, QProcess::ExitStatus exitStatus);
-    void blackListChanged(QString file);
-    void profileUpdated(const QString &file);
+    private slots:
 
-private:
-    QPointer<QProcess> m_process;
-    QStringList m_blacklist;
-    QStringList m_searchkeys;
-    //QFileSystemWatcher fileWatch;
-    int m_collapseLevel;
-    QString m_profile;
-    FileWatcher *m_filewatch;
-};
+        void gotData();
+        void gotError(QProcess::ProcessError err);
+        void onExit(int exitCode, QProcess::ExitStatus exitStatus);
+        void blackListChanged(QString file);
+        void profileUpdated(const QString &file);
+
+    private:
+        QPointer<QProcess> m_process;
+        QStringList m_blacklist;
+        QStringList m_searchkeys;
+        int m_collapseLevel;
+        QString m_profile;
+        utils::FileWatcher *m_filewatch;
+    };
+} //namespace
 
 #endif // LOGCAT_H

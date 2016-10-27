@@ -35,48 +35,58 @@
 #include <QDebug>
 #include <QThread>
 #include <QtCore/QFile>
-
+namespace utils {
 #define EVENT_SIZE (sizeof(struct inotify_event))
 #define EVENT_BUF_LEN (1024*(EVENT_SIZE+16))
 
-class LinuxFileWatcher : public QObject
-{
-Q_OBJECT
-public:
-    explicit LinuxFileWatcher(QObject *parent = 0);
-    ~LinuxFileWatcher();
-    /**
-     * Path to dir
-     * @param path
-     */
-    void addPath(const QString path){ m_path = path;} //todo implement this
+    class LinuxFileWatcher : public QObject {
+    Q_OBJECT
+    public:
+        explicit LinuxFileWatcher(QObject *parent = 0);
 
-signals:
-    void fileCreate(const QString &file);
-    void fileDelete(const QString &file);
-    void fileCloseWrite(const QString &file);
-    void fileMove(const QString &file);
+        ~LinuxFileWatcher();
 
-    void dirCreate(const QString &dir);
-    void dirDelete(const QString &dir);
-    void dirCloseWrite(const QString &dir);
-    void dirMove(const QString &dir);
+        /**
+         * Path to dir
+         * @param path
+         */
+        void addPath(const QString path) { m_path = path; } //todo implement this
 
-    /**
-     * misc error messages
-     * @param err
-     */
-    void error(const QString err);
+    signals:
 
-public slots:
-    void startWatch();
+        void fileCreate(const QString &file);
 
-private:
-    void watch();
-    int m_filewatch;
-    int m_filedescriptor;
-    QString m_path;
-};
+        void fileDelete(const QString &file);
+
+        void fileCloseWrite(const QString &file);
+
+        void fileMove(const QString &file);
+
+        void dirCreate(const QString &dir);
+
+        void dirDelete(const QString &dir);
+
+        void dirCloseWrite(const QString &dir);
+
+        void dirMove(const QString &dir);
+
+        /**
+         * misc error messages
+         * @param err
+         */
+        void error(const QString err);
+
+    public slots:
+
+        void startWatch();
+
+    private:
+        void watch();
+
+        int m_filewatch;
+        int m_filedescriptor;
+        QString m_path;
+    };
+} //namespace
 
 #endif // LINUXFILEWATCHER_H
-
