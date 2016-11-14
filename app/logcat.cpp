@@ -36,6 +36,7 @@ namespace logtool {
         m_searchkeys.append(fileReader.read(
                 QString("%1/%2").arg(QDir::homePath()).arg(keyWordFile))); ///@todo add this path to configfile
 
+        m_printer = new utils::OutputPrinter(m_searchkeys);
         connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(gotData()));
 #if QT_VERSION >= 0x050600
         connect(m_process, SIGNAL(errorOccurred(QProcess::error)), this, SLOT(gotError(QProcess::error)));
@@ -46,44 +47,34 @@ namespace logtool {
 
     Logcat::~Logcat() {
         m_process->close();
+        delete m_printer;
         delete m_filewatch;
     }
 
     void Logcat::gotData() {
-        bool blacklisted = false;
         QByteArray byte = m_process->readAllStandardOutput();
-        QStringList lines = QString(byte).split('\n');
-                foreach(const QString &line, lines) {
-                        foreach(const QString &key, m_blacklist) {
-                        if (line.contains(key)) {
-                            blacklisted = true;
-                            break;
-                        }
-                    }
-                if (line.size() > 1 && !blacklisted) {
-                            foreach(const QString &key, m_searchkeys) {
-                            QString firstchar = line.mid(0, 1);
-                            std::string colorcode = Color::Format::Reset;
-                            if (firstchar.toLower() ==
-                                "e") { ///@todo remove hardcoded value, this print android system exceptions with red
-                                colorcode = Color::Text::Red;
-                            } else if (line.contains("INFO:CONSOLE")) { ///@todo remove hardcoded value
-                                colorcode = Color::Text::LightBlue;
-                            }
-                            if (line.contains(key)) {
-                                std::cout << colorcode << Color::Format::Bold << line.trimmed().toStdString()
-                                          << Color::Format::Reset << std::endl;
-                            } else {
-                                if (m_collapseLevel != 1) {
-                                    std::cout << colorcode << line.trimmed().toStdString() << Color::Format::Reset
-                                              << std::endl;
-                                }
-                            }
-                            utils::FQLog::getInstance().info("", line.trimmed());
-                        }
+        blacklistOutput(QString(byte));
+    }
+
+    /**
+     * @todo move this code to another class...
+     */
+    void Logcat::blacklistOutput(const QString &data){
+        bool blacklisted = false;
+        QStringList lines = data.split('\n');
+
+        foreach(const QString &line, lines) {
+            foreach(const QString &key, m_blacklist) {
+                if (line.contains(key)) {
+                    blacklisted = true;
+                    break;
                 }
-                blacklisted = false;
             }
+            if(!blacklisted){
+                m_printer->colorizeOutput(line);
+            }
+            blacklisted = false;
+        }
     }
 
     void Logcat::gotError(QProcess::ProcessError err) {
@@ -95,7 +86,7 @@ namespace logtool {
         connectAdb();
     }
 
-    void Logcat::blackListChanged(QString file) {
+    void Logcat::blackListChanged(const QString &file) {
         utils::FileReader fileReader;
         m_blacklist.clear();
         m_blacklist.append(fileReader.read(m_profile));

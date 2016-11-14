@@ -30,6 +30,7 @@
 #include <QByteArray>
 #include <QPointer>
 #include <QFileSystemWatcher>
+#include <utils/outputprinter.h>
 
 #include "utils/flog.h"
 #include "utils/filereader.h"
@@ -53,7 +54,7 @@ namespace logtool {
         void gotData();
         void gotError(QProcess::ProcessError err);
         void onExit(int exitCode, QProcess::ExitStatus exitStatus);
-        void blackListChanged(QString file);
+        void blackListChanged(const QString &file);
         void profileUpdated(const QString &file);
 
     private:
@@ -63,6 +64,11 @@ namespace logtool {
         int m_collapseLevel;
         QString m_profile;
         utils::FileWatcher *m_filewatch;
+        utils::OutputPrinter *m_printer;
+
+        void blacklistOutput(const QString &data);
+
+        //void colorizeOutput(const QString &line) const;
     };
 } //namespace
 
