@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
     QString profile = parser.value(opt_profile);
     logtool::Logcat lc(profile);
     int collapse = parser.value(opt_collapse).toInt();
-    qDebug() << "Collapse level: " << collapse;
     if(collapse > 0){
         lc.setCollapseLevel(collapse);
     }

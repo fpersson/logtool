@@ -12,7 +12,7 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt5Core)
 
 # Tell CMake to create the helloworld executable
-add_executable(logtool main.cpp utils/filereader.cpp utils/flog.cpp app/logcat.cpp utils/filewatcher.cpp utils/linuxfilewatcher.cpp utils/outputprinter.cpp)
+add_executable(logtool main.cpp utils/filereader.cpp utils/flog.cpp app/logcat.cpp app/blacklistmanager.cpp utils/filewatcher.cpp utils/linuxfilewatcher.cpp utils/outputprinter.cpp)
 
 # Use the Widgets module from Qt 5.
 target_link_libraries(logtool Qt5::Core)

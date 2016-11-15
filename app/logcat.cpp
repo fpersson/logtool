@@ -23,14 +23,17 @@ namespace logtool {
         utils::FQLog::getInstance().info("", "*************** START *****************");
         utils::FQLog::getInstance().setLevel(utils::LOG::INFO);
         m_process = new QProcess(this);
+        m_blacklistManager = new BlacklistManager(profile);
         m_profile = profile;
         utils::FileReader fileReader;
-        m_blacklist.append(fileReader.read(m_profile));
+        m_blacklist.append(m_blacklistManager->getList());
         m_collapseLevel = 0;
 
         m_filewatch = new utils::FileWatcher;
         m_filewatch->addPath(QString("%1/%2").arg(QDir::homePath()).arg("log_profiles"));
-        connect(m_filewatch, SIGNAL(fileCloseWrite(QString)), this, SLOT(profileUpdated(QString)));
+
+        connect(m_filewatch, SIGNAL(fileCloseWrite(QString)), m_blacklistManager, SLOT(readNewList(QString)));
+        connect(m_blacklistManager, SIGNAL(updated(QStringList)), this, SLOT(blacklistUpdated(QStringList)));
 
         //highlighted msg
         m_searchkeys.append(fileReader.read(
@@ -49,6 +52,7 @@ namespace logtool {
         m_process->close();
         delete m_printer;
         delete m_filewatch;
+        delete m_blacklistManager;
     }
 
     void Logcat::gotData() {
@@ -68,6 +72,7 @@ namespace logtool {
                 if (line.contains(key)) {
                     blacklisted = true;
                     break;
+                }else{
                 }
             }
             if(!blacklisted){
@@ -86,20 +91,12 @@ namespace logtool {
         connectAdb();
     }
 
-    void Logcat::blackListChanged(const QString &file) {
-        utils::FileReader fileReader;
-        m_blacklist.clear();
-        m_blacklist.append(fileReader.read(m_profile));
-        qDebug() << "BACKLIST NEW SIZE" << m_blacklist.length();
-    }
-
     void Logcat::connectAdb() {
         m_process->start("adb logcat"); ///@todo add path to adb in configfile
     }
 
-    void Logcat::profileUpdated(const QString &file) {
-        if (file == m_profile) {
-            blackListChanged(file);
-        }
+    void Logcat::blacklistUpdated(const QStringList &list){
+        m_blacklist.clear();
+        m_blacklist.append(list);
     }
 }//namespace
