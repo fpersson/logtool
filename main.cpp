@@ -23,7 +23,7 @@
 #include <QString>
 #include <QDebug>
 
-#include "app/logcat.h"
+#include "app/logtool.h"
 #include "utils/flog.h"
 
 #include "utils/filereader.h"
@@ -66,10 +66,10 @@ int main(int argc, char *argv[])
 
     utils::FQLog::getInstance().init(logdir, "/messages", false);
     QString profile = parser.value(opt_profile);
-    logtool::Logcat lc(profile);
+    logtool::LogTool tool(profile);
     int collapse = parser.value(opt_collapse).toInt();
     if(collapse > 0){
-        lc.setCollapseLevel(collapse);
+        tool.setCollapseLevel(collapse);
     }
 
     return app.exec();

@@ -29,48 +29,26 @@
 #include <QStringList>
 #include <QByteArray>
 #include <QPointer>
-#include <QFileSystemWatcher>
-#include <utils/outputprinter.h>
-
-#include "utils/flog.h"
-#include "utils/filereader.h"
-#include "utils/unix_color.h"
-#include "utils/filewatcher.h"
-#include "blacklistmanager.h"
 
 namespace logtool {
-    const QString keyWordFile = "log_profiles/keys"; ///@todo remove this and create a nice config file.
 
     class Logcat : public QObject {
     Q_OBJECT
     public:
-        explicit Logcat(QString profile, QObject *parent = 0);
+        explicit Logcat(QObject *parent = 0);
         ~Logcat();
-        void setCollapseLevel(int level) { m_collapseLevel = level; }
         void connectAdb();
 
     signals:
+        void dataAvailable(const QString &data);
 
     private slots:
-
         void gotData();
         void gotError(QProcess::ProcessError err);
         void onExit(int exitCode, QProcess::ExitStatus exitStatus);
 
-        void blacklistUpdated(const QStringList &list);
-
     private:
         QPointer<QProcess> m_process;
-        QStringList m_blacklist;
-        QStringList m_searchkeys;
-        int m_collapseLevel;
-        QString m_profile;
-        BlacklistManager *m_blacklistManager;
-        utils::FileWatcher *m_filewatch;
-        utils::OutputPrinter *m_printer;
-
-        void blacklistOutput(const QString &data);
-
     };
 } //namespace
 

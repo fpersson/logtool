@@ -19,27 +19,8 @@
  Copyright (C) 2016, Fredrik Persson <fpersson.se@gmail.com>
  */
 namespace logtool {
-    Logcat::Logcat(QString profile, QObject *parent) : QObject(parent) {
-        utils::FQLog::getInstance().info("", "*************** START *****************");
-        utils::FQLog::getInstance().setLevel(utils::LOG::INFO);
+    Logcat::Logcat(QObject *parent) : QObject(parent) {
         m_process = new QProcess(this);
-        m_blacklistManager = new BlacklistManager(profile);
-        m_profile = profile;
-        utils::FileReader fileReader;
-        m_blacklist.append(m_blacklistManager->getList());
-        m_collapseLevel = 0;
-
-        m_filewatch = new utils::FileWatcher;
-        m_filewatch->addPath(QString("%1/%2").arg(QDir::homePath()).arg("log_profiles"));
-
-        connect(m_filewatch, SIGNAL(fileCloseWrite(QString)), m_blacklistManager, SLOT(readNewList(QString)));
-        connect(m_blacklistManager, SIGNAL(updated(QStringList)), this, SLOT(blacklistUpdated(QStringList)));
-
-        //highlighted msg
-        m_searchkeys.append(fileReader.read(
-                QString("%1/%2").arg(QDir::homePath()).arg(keyWordFile))); ///@todo add this path to configfile
-
-        m_printer = new utils::OutputPrinter(m_searchkeys);
         connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(gotData()));
 #if QT_VERSION >= 0x050600
         connect(m_process, SIGNAL(errorOccurred(QProcess::error)), this, SLOT(gotError(QProcess::error)));
@@ -50,36 +31,11 @@ namespace logtool {
 
     Logcat::~Logcat() {
         m_process->close();
-        delete m_printer;
-        delete m_filewatch;
-        delete m_blacklistManager;
     }
 
     void Logcat::gotData() {
         QByteArray byte = m_process->readAllStandardOutput();
-        blacklistOutput(QString(byte));
-    }
-
-    /**
-     * @todo move this code to another class...
-     */
-    void Logcat::blacklistOutput(const QString &data){
-        bool blacklisted = false;
-        QStringList lines = data.split('\n');
-
-        foreach(const QString &line, lines) {
-            foreach(const QString &key, m_blacklist) {
-                if (line.contains(key)) {
-                    blacklisted = true;
-                    break;
-                }else{
-                }
-            }
-            if(!blacklisted){
-                m_printer->colorizeOutput(line);
-            }
-            blacklisted = false;
-        }
+        emit dataAvailable(QString(byte));
     }
 
     void Logcat::gotError(QProcess::ProcessError err) {
@@ -93,10 +49,5 @@ namespace logtool {
 
     void Logcat::connectAdb() {
         m_process->start("adb logcat"); ///@todo add path to adb in configfile
-    }
-
-    void Logcat::blacklistUpdated(const QStringList &list){
-        m_blacklist.clear();
-        m_blacklist.append(list);
     }
 }//namespace
