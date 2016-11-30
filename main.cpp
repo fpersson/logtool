@@ -32,11 +32,12 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     QString logdir ="";
+    QString mode = "";
     QCoreApplication::setApplicationName("LogTool");
-    QCoreApplication::setApplicationVersion("0.1.1");
+    QCoreApplication::setApplicationVersion("0.1.2");
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("LogTool, A better way use Android Debug Bridge (adb)");
+    parser.setApplicationDescription("LogTool, A better way debug your software.");
     parser.addHelpOption();
     parser.addVersionOption();
 
@@ -56,9 +57,15 @@ int main(int argc, char *argv[])
                                     QCoreApplication::translate("main", ""), "");
     parser.addOption(opt_collapse);
 
+    QCommandLineOption opt_mode(QStringList() << "m" << "mode",
+                                    QCoreApplication::translate("main", "set mode for logcat (default) or rs232"),
+                                    QCoreApplication::translate("main", "logcat | rs232"), "");
+    parser.addOption(opt_mode);
+
     parser.process(app);
 
     logdir = parser.value(opt_logdir);
+    mode = parser.value(opt_mode);
 
     if(logdir.isEmpty()){
         logdir = "/logtool/log";
@@ -66,7 +73,7 @@ int main(int argc, char *argv[])
 
     utils::FQLog::getInstance().init(logdir, "/messages", false);
     QString profile = parser.value(opt_profile);
-    logtool::LogTool tool(profile);
+    logtool::LogTool tool(profile, mode);
     int collapse = parser.value(opt_collapse).toInt();
     if(collapse > 0){
         tool.setCollapseLevel(collapse);

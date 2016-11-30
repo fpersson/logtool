@@ -36,6 +36,7 @@
 #include "utils/filewatcher.h"
 #include "blacklistmanager.h"
 #include "logcat.h"
+#include "rs232reader.h"
 
 namespace logtool {
     const QString keyWordFile = "log_profiles/keys"; ///@todo remove this and create a nice config file.
@@ -43,7 +44,7 @@ namespace logtool {
     class LogTool : public QObject {
     Q_OBJECT
     public:
-        explicit LogTool(const QString &profile, QObject *parent =0 );
+        explicit LogTool(const QString &profile, const QString &mode, QObject *parent =0 );
         ~LogTool(){;}
         void setCollapseLevel(int level) { m_collapseLevel = level; }
 
@@ -54,6 +55,7 @@ namespace logtool {
 
     private:
         QPointer<Logcat> m_logcat;
+        QPointer<Rs232Reader> m_rs232Reader;
         QStringList m_blacklist;
         QStringList m_searchkeys;
         int m_collapseLevel;

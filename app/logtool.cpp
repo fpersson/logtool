@@ -20,7 +20,7 @@
 
 #include "logtool.h"
 namespace logtool{
-    LogTool::LogTool(const QString &profile, QObject *parent) :QObject(parent) {
+    LogTool::LogTool(const QString &profile, const QString &mode, QObject *parent) :QObject(parent) {
         utils::FQLog::getInstance().info("", "*************** START *****************");
         utils::FQLog::getInstance().setLevel(utils::LOG::INFO);
         m_blacklistManager = new BlacklistManager(profile);
@@ -29,8 +29,16 @@ namespace logtool{
         m_blacklist.append(m_blacklistManager->getList());
         m_collapseLevel = 0;
 
-        m_logcat = new Logcat();
-        connect(m_logcat, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
+        qDebug() << "Mode: " << mode;
+
+        ///@todo implement a better switch....
+        if(mode.toLower() == "rs232"){
+            m_rs232Reader = new Rs232Reader("Not implemented yet");
+            connect(m_rs232Reader, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
+        }else {
+            m_logcat = new Logcat();
+            connect(m_logcat, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
+        }
 
         m_filewatch = new utils::FileWatcher;
         m_filewatch->addPath(QString("%1/%2").arg(QDir::homePath()).arg("log_profiles"));
