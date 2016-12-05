@@ -1,4 +1,9 @@
+**Status**
+
+[![Build Status](https://travis-ci.org/fpersson/logtool.svg?branch=master)](https://travis-ci.org/fpersson/logtool)
+
 **About**
+
 A better way debug your software.
 
 Support:
