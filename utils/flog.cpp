@@ -16,7 +16,7 @@
  Boston, MA  02110-1301, USA.
 
  ---
- Copyright (C) 2016, Fredrik Persson <fpersson.se@gmail.com>
+ Copyright (C) 2013 - 2016, Fredrik Persson <fpersson.se@gmail.com>
  */
 namespace utils{
 
@@ -72,8 +72,13 @@ QString FQLog::getTimeStamp(){
 }
 
 void FQLog::init(const QString &dir, const QString &file, const bool &debugmode){
+    init(dir, file, debugmode, false);
+}
+
+void FQLog::init(const QString &dir, const QString &file, const bool &debugmode, const bool &forcerotate){
     m_debug = debugmode;
     m_numLogs = 5;
+    setStaleLockTime(STALE_LOCK_TIME);
     QString path;
 #ifdef Q_OS_ANDROID
     path = "/mnt/sdcard";
@@ -89,47 +94,56 @@ void FQLog::init(const QString &dir, const QString &file, const bool &debugmode)
             qDebug() << "Could not create: " << m_logdir;
         }
     }
-    rotateLog();
+
+    if(forcerotate == true) {
+        rotateLog();
+    }
 }
 
 void FQLog::writeLog(QString msg){
     msg.append("\n");
     QFile file(m_logfile);
-    QFileInfo fileInfo(m_logfile);
-    if(file.open(QFile::Append | QIODevice::Text)){
-        QTextStream out(&file);
-        out << msg;
-        file.close();
+    if(m_lockfile->tryLock()) {
+        if (file.open(QFile::Append | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << msg;
+            file.close();
+        }
+        m_lockfile->unlock();
     }
 
-    //ca 2mb stora logfiler
+    QFileInfo fileInfo(m_logfile);
+    //rotate at 2mb
     if(fileInfo.size()/MEGABYTE > 2){
         rotateLog();
     }
 }
 
 void FQLog::rotateLog(){
-    QString srcLog;
-    QString destLog;
-    QFile log(m_logfile);
+    if(m_lockfile->tryLock()) {
+        QString srcLog;
+        QString destLog;
+        QFile log(m_logfile);
 
-    if(log.exists()){
-        for(int i = m_numLogs-1; i != 0; --i){
-            srcLog = m_logfile;
+        if(log.exists()){
+            for(int i = m_numLogs-1; i != 0; --i){
+                srcLog = m_logfile;
+                destLog = m_logfile;
+                srcLog.append(".");
+                int l = i -1;
+                srcLog.append(QString::number(l));
+                destLog.append(".");
+                destLog.append(QString::number(i));
+                moveLog(srcLog, destLog);
+            }
             destLog = m_logfile;
-            srcLog.append(".");
-            int l = i -1;
-            srcLog.append(QString::number(l));
-            destLog.append(".");
-            destLog.append(QString::number(i));
-            moveLog(srcLog, destLog);
+            moveLog(m_logfile, destLog.append(".0"));
+            QFile file(m_logfile);
+            if(file.exists()){
+                file.remove();
+            }
         }
-        destLog = m_logfile;
-        moveLog(m_logfile, destLog.append(".0"));
-        QFile file(m_logfile);
-        if(file.exists()){
-            file.remove();
-        }
+        m_lockfile->unlock();
     }
 }
 
@@ -141,9 +155,20 @@ void FQLog::moveLog(QString srcfile, const QString &destfile){
     }
 }
 
+void FQLog::setStaleLockTime(int staleLockTime) {
+    if(m_lockfile != NULL) {
+        m_lockfile->setStaleLockTime(staleLockTime);
+    }
+}
+
 FQLog::FQLog(){
     m_level.resize(LOG::numLevels);
     m_level.setBit(LOG::ALL);
+    m_lockfile = new QLockFile("DEFAULT_LOCK_FILE");
+}
+
+FQLog::~FQLog() {
+    delete m_lockfile;
 }
 
 }//namespace
