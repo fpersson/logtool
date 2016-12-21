@@ -44,7 +44,7 @@ namespace logtool {
     class LogTool : public QObject {
     Q_OBJECT
     public:
-        explicit LogTool(const QString &profile, const QString &mode, QObject *parent =0 );
+        explicit LogTool(const QString &profile, const QString &mode, const QString &cmd, QObject *parent =0 );
         ~LogTool(){;}
         void setCollapseLevel(int level) { m_collapseLevel = level; }
 

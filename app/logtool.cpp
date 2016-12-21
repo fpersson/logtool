@@ -20,7 +20,7 @@
 
 #include "logtool.h"
 namespace logtool{
-    LogTool::LogTool(const QString &profile, const QString &mode, QObject *parent) :QObject(parent) {
+    LogTool::LogTool(const QString &profile, const QString &mode, const QString &cmd, QObject *parent) :QObject(parent) {
         utils::FQLog::getInstance().info("", "*************** START *****************");
         utils::FQLog::getInstance().setLevel(utils::LOG::INFO);
         m_blacklistManager = new BlacklistManager(profile);
@@ -29,15 +29,18 @@ namespace logtool{
         m_blacklist.append(m_blacklistManager->getList());
         m_collapseLevel = 0;
 
-        qDebug() << "Mode: " << mode;
-
         ///@todo implement a better switch....
         if(mode.toLower() == "rs232"){
             m_rs232Reader = new Rs232Reader("Not implemented yet");
             connect(m_rs232Reader, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
         }else {
-            m_logcat = new Logcat();
-            connect(m_logcat, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
+            if(mode.toLower() == "logcat") {
+                m_logcat = new Logcat("adb logcat"); //@todo remove this hardcoded junk
+                connect(m_logcat, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
+            }else if(!cmd.isEmpty()){
+                m_logcat = new Logcat(cmd);
+                connect(m_logcat, SIGNAL(dataAvailable(QString)), this, SLOT(processData(QString)));
+            }
         }
 
         m_filewatch = new utils::FileWatcher;

@@ -35,7 +35,7 @@ namespace logtool {
     class Logcat : public QObject {
     Q_OBJECT
     public:
-        explicit Logcat(QObject *parent = 0);
+        explicit Logcat(const QString &command, QObject *parent = 0);
         ~Logcat();
         void connectAdb();
 
@@ -49,6 +49,7 @@ namespace logtool {
 
     private:
         QPointer<QProcess> m_process;
+        QString m_debugCommand;
     };
 } //namespace
 

@@ -9,6 +9,7 @@ A better way debug your software.
 Support:
 * Android logcat
 * rs232 (expermintal)
+* tail
 
 **Configuration:**
 
@@ -22,17 +23,16 @@ Make sure your path to adb is in your $PATH
 
 **Usage:**
 ```
-Usage: ./build/logtool [options]
+Usage: logtool [options]
 LogTool, A better way debug your software.
 
 Options:
-  -h, --help                        Displays this help.
-  -v, --version                     Displays version information.
-  -l, --logdir <dir>                set logdir (/foo/logdir).
-  -p, --profile </path/to/profile>  set profile (/path/to/profile)
-  -c, --collapse                    set collapse level 0=default 1=Only Tags
-                                    and exception
-  -m, --mode <logcat | rs232>       set mode for logcat (default) or rs232
+  -h, --help                         Displays this help.
+  -v, --version                      Displays version information.
+  -l, --logdir <dir>                 set logdir (/foo/logdir).
+  -p, --profile </path/to/profile>   set profile (/path/to/profile)
+  -m, --mode <logcat | rs232 | cmd>  set mode for logcat (default) or rs232
+  -c, --cmd <path to log>            your own command (tail -f /path/to/log)
    ```
 **Requirement**
 

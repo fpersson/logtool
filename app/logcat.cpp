@@ -19,7 +19,8 @@
  Copyright (C) 2016, Fredrik Persson <fpersson.se@gmail.com>
  */
 namespace logtool {
-    Logcat::Logcat(QObject *parent) : QObject(parent) {
+    Logcat::Logcat(const QString &command, QObject *parent) : QObject(parent) {
+        m_debugCommand=command;
         m_process = new QProcess(this);
         connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(gotData()));
 #if QT_VERSION >= 0x050600
@@ -48,6 +49,8 @@ namespace logtool {
     }
 
     void Logcat::connectAdb() {
-        m_process->start("adb logcat"); ///@todo add path to adb in configfile
+        if(!m_debugCommand.isEmpty()) {
+            m_process->start(m_debugCommand); ///@todo add path to adb in configfile
+        }
     }
 }//namespace
