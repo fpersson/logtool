@@ -24,11 +24,14 @@
 namespace logtool {
 
     BlacklistManager::BlacklistManager(const QString &listfile, QObject *parent) : QObject(parent) {
+        m_blacklistfile = listfile;
         readListFile(listfile);
     }
 
     void BlacklistManager::readNewList(const QString &list) {
-        readListFile(list);
+        if(list == m_blacklistfile) {
+            readListFile(list);
+        }
     }
 
     void BlacklistManager::readListFile(const QString &file) {

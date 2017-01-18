@@ -37,6 +37,7 @@ namespace logtool {
 
     private:
         QStringList m_blacklist;
+        QString m_blacklistfile;
         void readListFile(const QString &file);
     };
 } //namespace
