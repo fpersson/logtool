@@ -24,6 +24,7 @@ namespace utils{
     OutputPrinter::OutputPrinter(const QStringList &keywords):m_keywords(keywords){}
 
     void OutputPrinter::colorizeOutput(const QString &line) {
+        std::string formated_string = "";
         if (line.size() > 1) {
             foreach(const QString &key, m_keywords) {
                 QString firstchar = line.mid(0, 1);
@@ -35,18 +36,15 @@ namespace utils{
                     colorcode = Color::Text::LightBlue;
                 }
 
+                formated_string = colorcode+line.trimmed().toStdString()+Color::Format::Reset;
+
                 if (line.contains(key)) {
-                    std::cout << colorcode << Color::Format::Bold << line.trimmed().toStdString() << Color::Format::Reset << std::endl;
-                } else {
-
-                    /// @todo reimplement levels
-                    //if (m_collapseLevel != 1) {
-                        std::cout << colorcode << line.trimmed().toStdString() << Color::Format::Reset << std::endl;
-                    //}
-
+                    formated_string = colorcode+Color::Format::Bold+line.trimmed().toStdString()+Color::Format::Reset;
+                    break;
                 }
-                utils::FQLog::getInstance().info("", line.trimmed());
             }
+            utils::FQLog::getInstance().info("", line.trimmed());
+            std::cout << formated_string << std::endl;
         }
     }
 }

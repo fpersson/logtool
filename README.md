@@ -34,6 +34,12 @@ Options:
   -m, --mode <logcat | rs232 | cmd>  set mode for logcat (default) or rs232
   -c, --cmd <path to log>            your own command (tail -f /path/to/log)
    ```
+**Example**
+```
+./build/logtool -m logcat -p ~/log_profiles/foo
+```
+Where foo is a plain text file containing a list black listed keywords. 
+
 **Requirement**
 
 QT 5.5 or later.
@@ -41,7 +47,7 @@ QT 5.5 or later.
 **Build:**
 * mkdir ./build
 * cd build
-* cmake ..
+* cmake .. or cmake ../ -DCMAKE_PREFIX_PATH=/path_to/Qt/5.7/gcc_64/
 * cd ..
 * make -C build/
 
