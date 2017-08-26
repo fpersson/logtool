@@ -65,21 +65,12 @@ public:
     ~FQLog();
 
     /**
-     * @brief call init before using the log
+     * @brief init call init before using the log.
      * @param dir
      * @param file
-     * @param debugmode
+     * @param debugmode true enable output to stdout
      */
     void init(const QString &dir, const QString &file, const bool &debugmode);
-
-    /**
-     * @brief call init before using the log,
-     * @param dir
-     * @param file
-     * @param debugmode
-     * @param forcerotate if set to true, a log rotate will be forced at init
-     */
-    void init(const QString &dir, const QString &file, const bool &debugmode, const bool &forcerotate);
 
     /**
      * @brief info

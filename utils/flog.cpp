@@ -72,20 +72,11 @@ QString FQLog::getTimeStamp(){
 }
 
 void FQLog::init(const QString &dir, const QString &file, const bool &debugmode){
-    init(dir, file, debugmode, false);
-}
-
-void FQLog::init(const QString &dir, const QString &file, const bool &debugmode, const bool &forcerotate){
     m_debug = debugmode;
     m_numLogs = 5;
     setStaleLockTime(STALE_LOCK_TIME);
     QString path;
-#ifdef Q_OS_ANDROID
-    path = "/mnt/sdcard";
-    qDebug() << "Android";
-#else
-    path = QDir::homePath();
-#endif
+
     m_logdir = QDir::toNativeSeparators(path.append(dir));
     m_logfile = QDir::toNativeSeparators(path.append(file));
     QDir logdir(m_logdir);
@@ -94,10 +85,8 @@ void FQLog::init(const QString &dir, const QString &file, const bool &debugmode,
             qDebug() << "Could not create: " << m_logdir;
         }
     }
+    rotateLog();
 
-    if(forcerotate == true) {
-        rotateLog();
-    }
 }
 
 void FQLog::writeLog(QString msg){

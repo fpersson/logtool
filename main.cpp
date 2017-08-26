@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
         logdir = "/logtool/log";
     }
 
+    QString absolute_log_path = QDir::homePath()+logdir;
+
     utils::FQLog::getInstance().init(logdir, "/messages", false);
     QString profile = parser.value(opt_profile);
     logtool::LogTool tool(profile, mode, command);
