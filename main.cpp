@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QString>
+#include <QSettings>
 #include <QDebug>
 
 #include "app/logtool.h"
@@ -34,8 +35,10 @@ int main(int argc, char *argv[])
     QString logdir ="";
     QString mode = "";
     QString command = "";
+    QString settings = "";
+    QString profile = "";
     QCoreApplication::setApplicationName("LogTool");
-    QCoreApplication::setApplicationVersion("0.1.3");
+    QCoreApplication::setApplicationVersion("0.1.4");
 
     QCommandLineParser parser;
     parser.setApplicationDescription("LogTool, A better way debug your software.");
@@ -70,20 +73,39 @@ int main(int argc, char *argv[])
                                 QCoreApplication::translate("main", "path to log"), "");
     parser.addOption(opt_cmd);
 
-    parser.process(app);
+    QCommandLineOption opt_settings(QStringList() << "s" << "set",
+                               QCoreApplication::translate("main", "use <settings>.ini"),
+                               QCoreApplication::translate("main", "setting files to use"), "");
+    parser.addOption(opt_settings);
 
+    parser.process(app);
+    settings = parser.value(opt_settings);
+
+    if(!settings.isEmpty()){
+        QPointer<QSettings> mySettings = new QSettings(settings, QSettings::IniFormat);
+        mySettings->beginGroup("System");
+        logdir = mySettings->value("logdir", "").toString();
+        command = mySettings->value("cmd", "").toString();
+        mode = mySettings->value("mode", "").toString();
+        profile = mySettings->value("blacklist", "").toString();
+        mySettings->endGroup();
+        qDebug() << "logdir=" << logdir;
+        qDebug() << "cmd=" << command;
+        qDebug() << "mode=" << mode;
+        qDebug() << "blacklist=" << profile;
+    }
+
+    if(logdir.isEmpty()){
+        logdir = QDir::homePath()+"/logtool/log";
+    }
+
+    //override settings with commandline options
+    profile = parser.value(opt_profile);
     logdir = parser.value(opt_logdir);
     mode = parser.value(opt_mode);
     command = parser.value(opt_cmd);
 
-    if(logdir.isEmpty()){
-        logdir = "/logtool/log";
-    }
-
-    QString absolute_log_path = QDir::homePath()+logdir;
-
     utils::FQLog::getInstance().init(logdir, "/messages", false);
-    QString profile = parser.value(opt_profile);
     logtool::LogTool tool(profile, mode, command);
     /*
     int collapse = parser.value(opt_collapse).toInt();

@@ -33,8 +33,28 @@ Options:
   -p, --profile </path/to/profile>   set profile (/path/to/profile)
   -m, --mode <logcat | rs232 | cmd>  set mode for logcat (default) or rs232
   -c, --cmd <path to log>            your own command (tail -f /path/to/log)
+  -s, --set <setting files to use>   use <settings>.ini
    ```
-**Example**
+
+**Example with inifile**
+```
+./build/logtool -s ~/log_profiles/foo.ini
+```
+
+**.ini file example**
+```
+[System]
+logdir="/home/fredrik/logtool/log"
+mode="logcat"
+cmd=""
+blacklist="/home/fredrik/log_profiles/foo"
+```
+* logdir is absolute path to your logdir (log file is /messages)
+* mode valid mode is logcat | rs232 | cmd
+* cmd is optional and only needed when mode=cmd.
+* blacklist is a file containing blacklisted keyword, debug messages with keywords will be removed and never displayed. This is same thing as profile. 
+
+**Example with arguments**
 ```
 ./build/logtool -m logcat -p ~/log_profiles/foo
 ```
@@ -52,5 +72,5 @@ QT 5.5 or later.
 * make -C build/
 
 **TODO:**
-* Rewrite the "profile"
+* Rewrite the "profile" (WIP)
 * Better documentation.
