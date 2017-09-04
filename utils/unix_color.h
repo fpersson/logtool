@@ -21,11 +21,10 @@
  */
 
 #include <string>
-#include <map>
 
 /**
  * @note this list is only for 16 color, a 256color version have to be done by someone else.
- * @example std::cout << COLOR::Text::Red << "Red." << std::endl;
+ * @example std::cout << Color::Text::Red << "Red." << Color::Format::Reset << std::endl;
  */
 namespace Color{
     namespace Text{
