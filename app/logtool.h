@@ -29,7 +29,14 @@
 #include <QPointer>
 #include <QFileSystemWatcher>
 
-#include "utils/outputprinter.h"
+#include "luautils/luaoutputprinter.h"
+
+#ifdef LUA_ENABLED
+    #include "luautils/luaoutputprinter.h"
+#else
+    #include "utils/outputprinter.h"
+#endif
+
 #include "utils/flog.h"
 #include "utils/filereader.h"
 #include "utils/unix_color.h"
@@ -62,8 +69,11 @@ namespace logtool {
         QString m_profile;
         BlacklistManager *m_blacklistManager;
         utils::FileWatcher *m_filewatch;
-        utils::OutputPrinter *m_printer;
-
+        #ifdef LUA_ENABLED
+            luautils::OutputPrinter *m_printer;
+        #else
+            utils::OutputPrinter *m_printer;
+        #endif
     };
 } //namespace
 

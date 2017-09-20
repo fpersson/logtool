@@ -99,11 +99,14 @@ int main(int argc, char *argv[])
         logdir = QDir::homePath()+"/logtool/log";
     }
 
+    //@todo fix this
     //override settings with commandline options
-    profile = parser.value(opt_profile);
-    logdir = parser.value(opt_logdir);
-    mode = parser.value(opt_mode);
-    command = parser.value(opt_cmd);
+    //profile = parser.value(opt_profile);
+    //logdir = parser.value(opt_logdir);
+    //mode = parser.value(opt_mode);
+    //command = parser.value(opt_cmd);
+
+    qDebug() << "LogDir: " << logdir;
 
     utils::FQLog::getInstance().init(logdir, "/messages", false);
     logtool::LogTool tool(profile, mode, command);

@@ -71,6 +71,13 @@ QT 5.5 or later.
 * cd ..
 * make -C build/
 
+if you want to use the lua support
+* mkdir ./build
+* cd build
+* cmake -D UseLua=ON .. or cmake -D UseLua=ON ../ -DCMAKE_PREFIX_PATH=/path_to/Qt/5.7/gcc_64/
+* cd ..
+* make -C build/
+
 **TODO:**
 * Rewrite the "profile" (WIP)
 * Better documentation.

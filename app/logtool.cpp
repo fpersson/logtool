@@ -53,8 +53,11 @@ namespace logtool{
         m_searchkeys.append(fileReader.read(
                 QString("%1/%2").arg(QDir::homePath()).arg(keyWordFile))); ///@todo add this path to configfile
 
-        m_printer = new utils::OutputPrinter(m_searchkeys);
-
+        #ifdef LUA_ENABLED
+            m_printer = new luautils::OutputPrinter(m_searchkeys);
+        #else
+            m_printer = new utils::OutputPrinter(m_searchkeys);
+        #endif
     }
 
     void LogTool::blacklistUpdated(const QStringList &list){
