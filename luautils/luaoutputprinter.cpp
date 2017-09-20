@@ -16,7 +16,13 @@ namespace luautils {
     OutputPrinter::OutputPrinter(const QStringList &keywords):m_keywords(keywords){
         m_luaState = luaL_newstate();
         luaL_openlibs(m_luaState);
+
         int status = luaL_dofile(m_luaState, "./scripts/test.lua"); //@todo remove hardcoded file
+
+        Color::exportTextFormatTable(m_luaState);
+        Color::exportBackColorTable(m_luaState);
+        Color::exportTextColorTable(m_luaState);
+
         if(status !=0 ){
             qDebug() << "script not found";
         }

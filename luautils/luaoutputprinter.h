@@ -34,7 +34,7 @@ extern "C" {
 }
 
 //#include "utils/flog.h"
-//#include "utils/unix_color.h"
+#include "luaunixcolor.h"
 
 namespace luautils {
     class OutputPrinter {

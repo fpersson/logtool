@@ -8,8 +8,15 @@
 
 -- This function will be called from C++
 function parseString(msg)
-    return msg
-    --return "This is from Lua " .. msg .. " [" .. LuaColor.Text.Red .. "OK" .. LuaColor.Text.Default .. "]"
+    --return msg
+    --return msg .. " [" .. Text.Red .. "OK" .. Text.Default .. "]"
+    if string.match(msg, "Sensors") then
+        return Text.Red .. TextFormat.Bold ..  msg .. TextFormat.Reset .. Text.Default
+    elseif string.match(msg, "PlayCommon") then
+        return TextFormat.Bold ..  msg .. TextFormat.Reset
+    else
+        return msg
+    end
 end
 
 

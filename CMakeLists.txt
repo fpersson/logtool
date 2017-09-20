@@ -36,6 +36,7 @@ if(UseLua)
 
     set(LUALIBS
         ${LUA_LIBRARIES}
+        luautils/luaunixcolor.cpp
         luautils/luaoutputprinter.cpp
     )
 endif(UseLua)
