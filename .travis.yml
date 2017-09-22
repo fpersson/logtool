@@ -8,7 +8,7 @@ before_install:
     - sudo apt-get -qq update
     - sudo apt-get install gcc-4.8 g++-4.8 qt56-meta-full -y
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-    - sudo apt-get install liblua5.2.0 liblua5.2.0-dev  
+    - sudo apt-get install liblua5.2 liblua5.2-dev  
 script:
     - source /opt/qt56/bin/qt56-env.sh
     - qmake
